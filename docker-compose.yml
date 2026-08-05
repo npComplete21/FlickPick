@@ -1,0 +1,38 @@
+services:
+  user-db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: flickpick_user
+      POSTGRES_USER: flickpick
+      POSTGRES_PASSWORD: flickpick
+    ports:
+      - "5433:5432"
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+
+  import-db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: flickpick_import
+      POSTGRES_USER: flickpick
+      POSTGRES_PASSWORD: flickpick
+    ports:
+      - "5434:5432"
+    volumes:
+      - import-db-data:/var/lib/postgresql/data
+
+  ranking-db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: flickpick_ranking
+      POSTGRES_USER: flickpick
+      POSTGRES_PASSWORD: flickpick
+    ports:
+      - "5435:5432"
+    volumes:
+      - ranking-db-data:/var/lib/postgresql/data
+
+volumes:
+  user-db-data:
+  import-db-data:
+  ranking-db-data:

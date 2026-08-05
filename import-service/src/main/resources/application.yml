@@ -1,0 +1,19 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: import-service
+  datasource:
+    url: jdbc:postgresql://localhost:5434/flickpick_import
+    username: flickpick
+    password: flickpick
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+management:
+  endpoint:
+    health:
+      show-details: always

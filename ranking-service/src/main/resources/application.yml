@@ -1,0 +1,19 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: ranking-service
+  datasource:
+    url: jdbc:postgresql://localhost:5435/flickpick_ranking
+    username: flickpick
+    password: flickpick
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+management:
+  endpoint:
+    health:
+      show-details: always

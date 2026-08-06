@@ -4,6 +4,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### JWT signing keys — never commit private key material ###
+src/main/resources/certs/*.pem
+
 ### STS ###
 .apt_generated
 .classpath

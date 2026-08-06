@@ -1,0 +1,45 @@
+.health-page {
+  max-width: 480px;
+  margin: 4rem auto;
+  font-family: system-ui, sans-serif;
+  text-align: left;
+}
+
+.service-list {
+  list-style: none;
+  padding: 0;
+}
+
+.service-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0;
+  font-size: 1.1rem;
+}
+
+.status-label {
+  margin-left: auto;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: #888;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #bbb;
+}
+
+.status-up .dot {
+  background: #2ecc71;
+}
+
+.status-down .dot {
+  background: #e74c3c;
+}
+
+.status-checking .dot {
+  background: #f1c40f;
+}

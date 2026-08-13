@@ -3,6 +3,7 @@ package com.flickpick.userservice.security;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -30,6 +31,12 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // CORS preflight (OPTIONS) requests never carry the
+                        // Authorization header, so anyRequest().authenticated()
+                        // would reject them before Spring MVC's CORS handling
+                        // ever runs — the browser then reports the failed real
+                        // request as a CORS error rather than a 401.
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         // Spring Boot's own error handling internally forwards to

@@ -1,20 +1,20 @@
 # FlickPick — Project Status
 
-_Last updated: 2026-08-06_
+_Last updated: 2026-08-14_
 
 ## Where we are
 
-Ranking Service's backend (comparison queue, binary-insertion algorithm,
-scoring) is merged to `main`. Frontend wiring for the actual ranking flow —
-login, submitting comparisons, viewing a ranked list — has not been started.
-The frontend currently only proves the three services are reachable via a
-health-check page.
+The walking skeleton is complete and working end to end: you can sign up,
+be handed a JWT, rank movies through pairwise comparisons, and see a scored
+ranked list — all in the browser, against two real services. The data is
+still the 8 fake seed movies, because Import Service doesn't exist yet.
+That's the next step.
 
 ## Build order progress
 
 - [x] Step 1: Scaffolding — merged (PR #1, #2)
 - [x] Step 2: User Service auth — merged (PR #3)
-- [~] Step 3: Ranking Service — backend merged (PR #4); frontend wiring **not started**
+- [x] Step 3: Ranking Service — backend merged (PR #4); frontend flow merged (PR #5)
 - [ ] Step 4: Import Service — bare scaffold only, no Letterboxd/TMDb logic
 - [ ] Step 5: Depth pass (pause/resume UX, refresh diffing, following-ready schema)
 - [ ] Step 6 (future, not yet): API Gateway
@@ -40,19 +40,32 @@ health-check page.
   verified via User Service's public key, zero network calls back to User
   Service. 8 fake seed movies stand in for real data until Import Service
   exists — see docs/build-log/ranking-service/01-comparison-queue-and-scoring.md
+- **Frontend auth + ranking flow**: login/signup, pairwise comparison, and
+  ranked-list screens, plus a typed `api/` layer. View switching is plain
+  `useState` and data fetching is plain `fetch` — deliberately no router and
+  no query library for three screens. JWT lives in `localStorage`; a 401
+  from either service logs the user out. See
+  docs/build-log/frontend/01-auth-and-ranking-flow.md
 
 ## In progress / not yet done for the current step
 
-Ranking Service's frontend wiring: a login screen (currently no auth UI
-exists at all), a pairwise-comparison screen that calls
-`GET /api/rankings/next-comparison` and `POST /api/rankings/compare`, and a
-ranked-list view calling `GET /api/rankings`.
+Nothing — Step 3 is done. Step 4 (Import Service) hasn't been started.
 
 ## Immediate next action
 
-Build the frontend auth + ranking flow: login form → store the JWT →
-comparison screen → ranked list, wired against User Service and Ranking
-Service.
+Build Import Service: Letterboxd RSS + export-ZIP importers, TMDb
+resolution, writing real movies into the pool that Ranking Service's
+comparison queue draws from (replacing `MovieSeeder`'s 8 fake movies).
+
+## Gotcha worth knowing before running locally
+
+`user-service`'s RSA keys are gitignored and generated per-machine via
+`user-service/generate-keys.sh`. `ranking-service`'s `public.pem` **is**
+committed, so regenerating User Service's keypair silently breaks token
+verification in Ranking Service until you re-copy the public key over. This
+already caused a debugging detour once (see the frontend build log). Import
+Service will need the same public key once it verifies JWTs — worth
+automating at that point rather than hand-copying to a second service.
 
 ## Open decisions / deliberately deferred
 

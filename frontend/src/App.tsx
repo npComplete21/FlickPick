@@ -1,50 +1,56 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import './App.css'
+import LoginScreen from './screens/LoginScreen'
+import CompareScreen from './screens/CompareScreen'
+import RankingsScreen from './screens/RankingsScreen'
+import HealthScreen from './screens/HealthScreen'
 
-interface ServiceCheck {
-  name: string
-  url: string
-}
+const TOKEN_STORAGE_KEY = 'flickpick_token'
 
-type Status = 'checking' | 'up' | 'down'
-
-const SERVICES: ServiceCheck[] = [
-  { name: 'User Service', url: 'http://localhost:8081/actuator/health' },
-  { name: 'Import Service', url: 'http://localhost:8082/actuator/health' },
-  { name: 'Ranking Service', url: 'http://localhost:8083/actuator/health' },
-]
+type View = 'compare' | 'rankings' | 'health'
 
 function App() {
-  const [statuses, setStatuses] = useState<Record<string, Status>>(
-    Object.fromEntries(SERVICES.map((s) => [s.name, 'checking'])),
+  const [token, setToken] = useState<string | null>(() =>
+    localStorage.getItem(TOKEN_STORAGE_KEY),
   )
+  const [view, setView] = useState<View>('compare')
 
-  useEffect(() => {
-    SERVICES.forEach((service) => {
-      fetch(service.url)
-        .then((res) => {
-          setStatuses((prev) => ({ ...prev, [service.name]: res.ok ? 'up' : 'down' }))
-        })
-        .catch(() => {
-          setStatuses((prev) => ({ ...prev, [service.name]: 'down' }))
-        })
-    })
-  }, [])
+  const handleAuthenticated = (newToken: string) => {
+    localStorage.setItem(TOKEN_STORAGE_KEY, newToken)
+    setToken(newToken)
+    setView('compare')
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem(TOKEN_STORAGE_KEY)
+    setToken(null)
+  }
+
+  if (!token) {
+    return <LoginScreen onAuthenticated={handleAuthenticated} />
+  }
 
   return (
-    <main className="health-page">
-      <h1>FlickPick</h1>
-      <h2>Service Health</h2>
-      <ul className="service-list">
-        {SERVICES.map((service) => (
-          <li key={service.name} className={`status-${statuses[service.name]}`}>
-            <span className="dot" />
-            {service.name}
-            <span className="status-label">{statuses[service.name]}</span>
-          </li>
-        ))}
-      </ul>
-    </main>
+    <div className="app-shell">
+      <nav className="app-nav">
+        <span className="app-nav-brand">FlickPick</span>
+        <button className={view === 'compare' ? 'active' : ''} onClick={() => setView('compare')}>
+          Compare
+        </button>
+        <button className={view === 'rankings' ? 'active' : ''} onClick={() => setView('rankings')}>
+          Rankings
+        </button>
+        <button className={view === 'health' ? 'active' : ''} onClick={() => setView('health')}>
+          Health
+        </button>
+        <button className="logout" onClick={handleLogout}>
+          Log out
+        </button>
+      </nav>
+      {view === 'compare' && <CompareScreen token={token} onUnauthorized={handleLogout} />}
+      {view === 'rankings' && <RankingsScreen token={token} onUnauthorized={handleLogout} />}
+      {view === 'health' && <HealthScreen />}
+    </div>
   )
 }
 

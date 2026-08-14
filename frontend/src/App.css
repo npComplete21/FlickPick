@@ -1,8 +1,148 @@
-.health-page {
+.health-page,
+.auth-page,
+.compare-page,
+.rankings-page {
   max-width: 480px;
   margin: 4rem auto;
   font-family: system-ui, sans-serif;
   text-align: left;
+}
+
+.app-shell {
+  font-family: system-ui, sans-serif;
+}
+
+.app-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.app-nav-brand {
+  font-weight: bold;
+  margin-right: 1rem;
+}
+
+.app-nav button {
+  background: none;
+  border: none;
+  padding: 0.4rem 0.6rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.app-nav button.active {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.app-nav button.logout {
+  margin-left: auto;
+  color: #e74c3c;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  max-width: 320px;
+}
+
+.auth-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.auth-form input {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.auth-form button {
+  padding: 0.6rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.auth-toggle {
+  margin-top: 1rem;
+  background: none;
+  border: none;
+  color: #2563eb;
+  cursor: pointer;
+  padding: 0;
+}
+
+.auth-error {
+  color: #e74c3c;
+  font-size: 0.9rem;
+}
+
+.movie-pair {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.movie-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: none;
+  cursor: pointer;
+  width: 180px;
+}
+
+.movie-card:hover:not(:disabled) {
+  border-color: #2563eb;
+}
+
+.movie-card:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.movie-card img {
+  width: 100%;
+  border-radius: 4px;
+}
+
+.ranking-list {
+  list-style: decimal;
+  padding-left: 1.5rem;
+}
+
+.ranking-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0;
+}
+
+.ranking-list img {
+  width: 32px;
+  border-radius: 3px;
+}
+
+.ranking-title {
+  flex: 1;
+}
+
+.ranking-score {
+  color: #888;
+  font-size: 0.9rem;
 }
 
 .service-list {

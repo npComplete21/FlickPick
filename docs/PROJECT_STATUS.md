@@ -1,21 +1,25 @@
 # FlickPick — Project Status
 
-_Last updated: 2026-08-14_
+_Last updated: 2026-08-18_
 
 ## Where we are
 
-The walking skeleton is complete and working end to end: you can sign up,
-be handed a JWT, rank movies through pairwise comparisons, and see a scored
-ranked list — all in the browser, against two real services. The data is
-still the 8 fake seed movies, because Import Service doesn't exist yet.
-That's the next step.
+The walking skeleton now runs on **real data**: you can sign up, import a
+Letterboxd history, rank those actual films through pairwise comparisons
+(with real poster art), and see a scored ranked list — all in the browser,
+across all three services.
+
+Step 4 is built but **not yet merged** — it lives on branch
+`feature/import-service`. RSS import only; the export-ZIP importer is still
+unbuilt.
 
 ## Build order progress
 
 - [x] Step 1: Scaffolding — merged (PR #1, #2)
 - [x] Step 2: User Service auth — merged (PR #3)
 - [x] Step 3: Ranking Service — backend merged (PR #4); frontend flow merged (PR #5)
-- [ ] Step 4: Import Service — bare scaffold only, no Letterboxd/TMDb logic
+- [~] Step 4: Import Service — Letterboxd **RSS** import done (branch
+  `feature/import-service`); **export-ZIP importer not built**
 - [ ] Step 5: Depth pass (pause/resume UX, refresh diffing, following-ready schema)
 - [ ] Step 6 (future, not yet): API Gateway
 
@@ -47,15 +51,30 @@ That's the next step.
   from either service logs the user out. See
   docs/build-log/frontend/01-auth-and-ranking-flow.md
 
+- **Import Service**: `POST /api/imports` pulls a public Letterboxd RSS feed,
+  parses out watched films, stores them, and **pushes** them into Ranking
+  Service's catalog via `POST /api/movies` — forwarding the user's own JWT
+  rather than holding a service credential. Dedup is by TMDb id, which the
+  RSS feed supplies directly (`<tmdb:movieId>`), so no TMDb API key is
+  needed. Chose push over pull so the comparison queue stays a local query
+  and doesn't fail when Import Service is down. See
+  docs/build-log/import-service/01-letterboxd-rss-import.md
+
 ## In progress / not yet done for the current step
 
-Nothing — Step 3 is done. Step 4 (Import Service) hasn't been started.
+Step 4 is functional but partial: **only the RSS importer exists**, so
+imports are capped at a user's ~50 most recent films. The export-ZIP
+importer (full history) would need multipart upload, ZIP/CSV parsing, and a
+frontend file picker.
+
+Also unbuilt: refresh diffing (re-import is idempotent but has no "what's
+new since last time"), and imported Letterboxd star ratings are stored but
+don't seed a film's starting rank.
 
 ## Immediate next action
 
-Build Import Service: Letterboxd RSS + export-ZIP importers, TMDb
-resolution, writing real movies into the pool that Ranking Service's
-comparison queue draws from (replacing `MovieSeeder`'s 8 fake movies).
+Merge `feature/import-service`, then decide between building the export-ZIP
+importer to finish Step 4, or moving to Step 5's depth pass.
 
 ## Gotcha worth knowing before running locally
 

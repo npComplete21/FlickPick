@@ -1,7 +1,8 @@
 .health-page,
 .auth-page,
 .compare-page,
-.rankings-page {
+.rankings-page,
+.import-page {
   max-width: 480px;
   margin: 4rem auto;
   font-family: system-ui, sans-serif;
@@ -141,6 +142,62 @@
 }
 
 .ranking-score {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.import-help {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.import-form {
+  display: flex;
+  gap: 0.6rem;
+  margin: 1rem 0;
+}
+
+.import-form input {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.import-form button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.import-result {
+  color: #2ecc71;
+  font-size: 0.95rem;
+}
+
+.imported-list {
+  list-style: none;
+  padding: 0;
+}
+
+.imported-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0;
+}
+
+.imported-list img {
+  width: 32px;
+  border-radius: 3px;
+}
+
+.imported-title {
+  flex: 1;
+}
+
+.imported-rating {
   color: #888;
   font-size: 0.9rem;
 }

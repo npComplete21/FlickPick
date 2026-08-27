@@ -3,11 +3,12 @@ import './App.css'
 import LoginScreen from './screens/LoginScreen'
 import CompareScreen from './screens/CompareScreen'
 import RankingsScreen from './screens/RankingsScreen'
+import ImportScreen from './screens/ImportScreen'
 import HealthScreen from './screens/HealthScreen'
 
 const TOKEN_STORAGE_KEY = 'flickpick_token'
 
-type View = 'compare' | 'rankings' | 'health'
+type View = 'compare' | 'rankings' | 'import' | 'health'
 
 function App() {
   const [token, setToken] = useState<string | null>(() =>
@@ -40,6 +41,9 @@ function App() {
         <button className={view === 'rankings' ? 'active' : ''} onClick={() => setView('rankings')}>
           Rankings
         </button>
+        <button className={view === 'import' ? 'active' : ''} onClick={() => setView('import')}>
+          Import
+        </button>
         <button className={view === 'health' ? 'active' : ''} onClick={() => setView('health')}>
           Health
         </button>
@@ -49,6 +53,7 @@ function App() {
       </nav>
       {view === 'compare' && <CompareScreen token={token} onUnauthorized={handleLogout} />}
       {view === 'rankings' && <RankingsScreen token={token} onUnauthorized={handleLogout} />}
+      {view === 'import' && <ImportScreen token={token} onUnauthorized={handleLogout} />}
       {view === 'health' && <HealthScreen />}
     </div>
   )

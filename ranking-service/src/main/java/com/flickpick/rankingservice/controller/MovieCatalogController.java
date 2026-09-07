@@ -6,6 +6,7 @@ import com.flickpick.rankingservice.service.MovieCatalogService;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,9 +28,12 @@ public class MovieCatalogController {
         this.movieCatalogService = movieCatalogService;
     }
 
+    // The user identity comes from the forwarded JWT, never from the body —
+    // so a push can only ever record ratings for the authenticated caller.
     @PostMapping
     public ResponseEntity<CatalogUpdateResponse> upsert(
-            @RequestBody List<@Valid MovieUpsertRequest> requests) {
-        return ResponseEntity.ok(movieCatalogService.upsertAll(requests));
+            Authentication authentication, @RequestBody List<@Valid MovieUpsertRequest> requests) {
+        Long userId = Long.valueOf(authentication.getName());
+        return ResponseEntity.ok(movieCatalogService.upsertAll(userId, requests));
     }
 }

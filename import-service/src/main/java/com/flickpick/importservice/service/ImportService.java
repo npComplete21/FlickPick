@@ -75,7 +75,7 @@ public class ImportService {
         RankingClient.CatalogUpdateResponse catalogUpdate = rankingClient.pushMovies(
                 distinct.values().stream()
                         .map(film -> new MovieUpsertRequest(
-                                film.tmdbId(), film.title(), film.posterUrl()))
+                                film.tmdbId(), film.title(), film.posterUrl(), film.rating()))
                         .toList(),
                 bearerToken);
 

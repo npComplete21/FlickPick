@@ -11,23 +11,31 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 
     Optional<Movie> findByTmdbId(Long tmdbId);
 
-    // The "unranked backlog" for a user: any catalog movie they haven't
-    // placed into their RankedMovie list yet.
+    // The user's unranked backlog: films in *their own* library that they
+    // haven't placed yet.
     //
-    // Films with a TMDb id came from a real import and are queued first;
-    // the fake seed catalog (tmdbId IS NULL) falls to the back. Without
-    // this, the 8 seeds hold ids 1-8 and a user who imported their whole
-    // Letterboxd history would have to rank all of them before reaching a
-    // single film of their own. Ordering by id within each group keeps the
-    // queue deterministic and repeatable.
+    // Scoped to the library rather than the whole catalog because `movies`
+    // is shared across all users (that's what makes TMDb dedup work) — an
+    // unscoped query would ask people to rank films someone else imported
+    // and they have never seen.
     //
-    // Returns the whole backlog (not just one) since the service layer only
-    // needs the first entry but a singular return type here would throw if
-    // more than one row matched.
+    // Ordered by id for a deterministic, repeatable queue.
     @Query("""
             SELECT m FROM Movie m
-            WHERE m.id NOT IN (SELECT rm.movie.id FROM RankedMovie rm WHERE rm.userId = :userId)
-            ORDER BY CASE WHEN m.tmdbId IS NULL THEN 1 ELSE 0 END ASC, m.id ASC
+            WHERE m.id IN (SELECT e.movie.id FROM UserLibraryEntry e WHERE e.userId = :userId)
+              AND m.id NOT IN (SELECT rm.movie.id FROM RankedMovie rm WHERE rm.userId = :userId)
+            ORDER BY m.id ASC
             """)
-    List<Movie> findUnrankedForUser(@Param("userId") Long userId);
+    List<Movie> findUnrankedInLibrary(@Param("userId") Long userId);
+
+    // Fallback for an account that has imported nothing at all, so a brand
+    // new user still has something to rank. Seeded stand-in films are the
+    // ones with no TMDb identity (see MovieSeeder).
+    @Query("""
+            SELECT m FROM Movie m
+            WHERE m.tmdbId IS NULL
+              AND m.id NOT IN (SELECT rm.movie.id FROM RankedMovie rm WHERE rm.userId = :userId)
+            ORDER BY m.id ASC
+            """)
+    List<Movie> findUnrankedSeeds(@Param("userId") Long userId);
 }

@@ -1,25 +1,27 @@
 # FlickPick — Project Status
 
-_Last updated: 2026-08-18_
+_Last updated: 2026-09-07_
 
 ## Where we are
 
-The walking skeleton now runs on **real data**: you can sign up, import a
-Letterboxd history, rank those actual films through pairwise comparisons
-(with real poster art), and see a scored ranked list — all in the browser,
-across all three services.
+The walking skeleton runs on **real data**: sign up, import a Letterboxd
+history, rank those actual films through pairwise comparisons (with real
+poster art), and see a scored ranked list — in the browser, across all three
+services.
 
-Step 4 is built but **not yet merged** — it lives on branch
-`feature/import-service`. RSS import only; the export-ZIP importer is still
-unbuilt.
+Step 4's RSS import is merged (PR #6). An unplanned follow-up — rating-seeded
+ranking — is built but **not committed**, on branch
+`feature/rating-seeded-ranking`.
 
 ## Build order progress
 
 - [x] Step 1: Scaffolding — merged (PR #1, #2)
 - [x] Step 2: User Service auth — merged (PR #3)
 - [x] Step 3: Ranking Service — backend merged (PR #4); frontend flow merged (PR #5)
-- [~] Step 4: Import Service — Letterboxd **RSS** import done (branch
-  `feature/import-service`); **export-ZIP importer not built**
+- [~] Step 4: Import Service — Letterboxd **RSS** import merged (PR #6);
+  **export-ZIP importer not built**
+- [~] Unplanned: rating-seeded ranking + per-user libraries — built,
+  uncommitted on `feature/rating-seeded-ranking`
 - [ ] Step 5: Depth pass (pause/resume UX, refresh diffing, following-ready schema)
 - [ ] Step 6 (future, not yet): API Gateway
 
@@ -68,13 +70,20 @@ importer (full history) would need multipart upload, ZIP/CSV parsing, and a
 frontend file picker.
 
 Also unbuilt: refresh diffing (re-import is idempotent but has no "what's
-new since last time"), and imported Letterboxd star ratings are stored but
-don't seed a film's starting rank.
+new since last time").
+
+Uncommitted on `feature/rating-seeded-ranking`: imported star ratings now
+narrow the binary-search window (231 → 91 comparisons on a real 49-film
+import, −61%), plus `UserLibraryEntry` scoping so a user only ranks films
+*they* imported rather than the whole shared catalog. Verified end to end;
+see docs/build-log/ranking-service/02-rating-seeded-ranking.md for the
+measurements and the three bugs it surfaced.
 
 ## Immediate next action
 
-Merge `feature/import-service`, then decide between building the export-ZIP
-importer to finish Step 4, or moving to Step 5's depth pass.
+Commit and open a PR for `feature/rating-seeded-ranking`, then decide
+between building the export-ZIP importer to finish Step 4 (now viable, since
+the comparison burden scales) or moving to Step 5's depth pass.
 
 ## Gotcha worth knowing before running locally
 

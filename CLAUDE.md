@@ -32,15 +32,15 @@ Frontend checks: `npm run build` (tsc + vite) and `npm run lint` (oxlint).
 
 ## Gotchas that have already cost time
 
-**Docker Compose project naming.** `docker-compose.yml` declares no `name:`,
-so Compose uses the basename of the directory you run it from. The currently
-running containers are named `initial-poc-*` because they were first started
-from a worktree of that name — **which no longer exists**. Running
-`docker compose up` from this checkout therefore tries to create a *new,
-empty* `flickpick-*` project and fails with "port is already allocated",
-since 5433/5434/5435 are hardcoded. Either keep using the existing
-`initial-poc-*` containers (they hold all the data), or set an explicit
-`name:` in the compose file and migrate deliberately. Background:
+**Docker Compose containers are named `initial-poc-*`, not `flickpick-*`.**
+Compose otherwise derives the project name from the directory you run it
+from, so containers and volumes created in one worktree were invisible — and
+port-conflicting — from every other checkout. `docker-compose.yml` now pins
+`name: initial-poc` explicitly, so `docker compose up`/`ps`/`logs` work
+identically from any directory. The odd name is historical (an early worktree
+was called that) and is kept deliberately: the existing volumes
+`initial-poc_*-db-data` hold the current dev data, and renaming the project
+would silently start you on empty databases. Background:
 `docs/build-log/03-docker-compose-project-naming.md`.
 
 **JWT keys are per-machine and hand-copied.** `user-service` holds the RSA

@@ -1,3 +1,11 @@
+# Pinned explicitly so the project name no longer depends on which directory
+# `docker compose` is run from. Without this, Compose derives the name from the
+# directory basename, which meant the containers/volumes created from a
+# worktree called `initial-poc` were invisible (and port-conflicting) from any
+# other checkout. The value keeps that historical name so the existing volumes
+# — which hold the current dev data — stay attached.
+name: initial-poc
+
 services:
   user-db:
     image: postgres:16
